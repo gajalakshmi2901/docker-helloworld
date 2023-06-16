@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps{
-                git credentialsId: 'Gajalakshmi-tf', url: 'https://dev.azure.com/gajalakshmi0905/Terraform%20module/_git/gajalakshmi-tf', branch: 'develop'
+                git credentialsId: 'gajalakshmi', url: 'https://dev.azure.com/gajalakshmi0905/Terraform%20module/_git/gajalakshmi-tf', branch: 'develop'
                 
             }
         }
