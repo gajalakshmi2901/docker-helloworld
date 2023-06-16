@@ -3,10 +3,13 @@ pipeline {
 
     stages {
         stage('Checkout') {
+            steps{
+                git credentialsId: 'gajarepo', url: 'https://dev.azure.com/gajalakshmi0905/Terraform%20module/_git/gajalakshmi-tf'
+
+            }
             steps {
                 script {
-                    // Get the Azure DevOps credentials
-                    withCredentials([usernamePassword(credentialsId: 'gajarepo')]) {
+                    {
                         sh "git clone --branch develop https://gajalakshmi0905@dev.azure.com/gajalakshmi0905/Terraform%20module/_git/gajalakshmi-tf"
                     }
                 }
