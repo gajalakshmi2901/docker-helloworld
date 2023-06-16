@@ -12,7 +12,7 @@ pipeline {
         stage('Build and Push Docker Image') {
             steps {
                 script {
-                    sh 'sudo groupadd docker' && 'sudo usermod -aG docker $USER'
+                    
                        sh 'docker build -t image1 .'
                        sh 'docker login projecte.azurecr.io -u projecte -p o0cledTfrzC8ChAaJCGF5l0fsvmRWQCGQ4Yrhve97G+ACRCLXnSS'
                        sh 'docker tag image1 projecte.azurecr.io/image1'
