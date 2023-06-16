@@ -7,15 +7,16 @@ pipeline {
                 git credentialsId: 'gajarepo', url: 'https://dev.azure.com/gajalakshmi0905/Terraform%20module/_git/gajalakshmi-tf'
 
             }
+        }
+        stage("cloning"){
             steps {
-                script {
-                    {
+                script{
                         sh "git clone --branch develop https://gajalakshmi0905@dev.azure.com/gajalakshmi0905/Terraform%20module/_git/gajalakshmi-tf"
                     }
                 }
                 
             }
-        }
+        
 
         stage('Build and Push Docker Image') {
             steps {
