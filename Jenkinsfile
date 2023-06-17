@@ -23,9 +23,9 @@ pipeline {
             stage('Pulling and Running Image') {
                 steps{
                     script{
-                        sh 'sshpass -p "Gajalakshmi@01" ssh -p 50022 1CHAdministrator@20.96.40.90 "sudo docker login projecte.azurecr.io -u projecte -p o0cledTfrzC8ChAaJCGF5l0fsvmRWQCGQ4Yrhve97G+ACRCLXnSS" '
-                        sh 'sshpass -p "Gajalakshmi@01" ssh -p 50022 1CHAdministrator@20.97.143.78 "docker pull projecte.azurecr.io/image1"'
-                        sh 'sshpass -p "Gajalakshmi@01"ssh -p 50022 1CHAdministrator@20.97.143.78 "docker run -d -p 8080:80 image1:latest"'
+                        sh 'sshpass -p "Gajalakshmi@01" ssh -p 50022 1CHAdministrator@20.96.41.90 "sudo docker login projecte.azurecr.io -u projecte -p o0cledTfrzC8ChAaJCGF5l0fsvmRWQCGQ4Yrhve97G+ACRCLXnSS" '
+                        sh 'sshpass -p "Gajalakshmi@01" ssh -p 50022 1CHAdministrator@20.96.41.90 "docker pull projecte.azurecr.io/image1"'
+                        sh 'sshpass -p "Gajalakshmi@01"ssh -p 50022 1CHAdministrator@20.96.41.90 "docker run -d -p 8080:80 image1:latest"'
                     }
                 }
         }
