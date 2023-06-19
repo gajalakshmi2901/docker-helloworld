@@ -32,14 +32,26 @@ pipeline {
              stage('Deploying pod and exposing on container') {
              steps {
                   script {
-                    sh 'sshpass -p "Gajalakshmi@01" ssh -o "StrictHostKeyChecking=no" -p 50022 1CHAdministrator@20.96.41.90  "git clone 
-
-                     sh 'sshpass -p "Gajalakshmi@01" ssh -o "StrictHostKeyChecking=no" -p 50022 1CHAdministrator@20.96.41.90  "kubectl apply -f gajalakshmi-tf/deployment.yaml"'
-                     sh 'sshpass -p "Gajalakshmi@01" ssh -o "StrictHostKeyChecking=no" -p 50022 1CHAdministrator@20.96.41.90 "sudo kubectl expose deployment hello-world --name=hello-world-svc --type=NodePort --port=8888"'
+                    sh 'sshpass -p "Gajalakshmi@01" ssh -o "StrictHostKeyChecking=no" -p 50022 1CHAdministrator@20.96.41.90  "sudo yum -y install git"'
+                    sh 'sshpass -p "Gajalakshmi@01" ssh -o "StrictHostKeyChecking=no" -p 50022 1CHAdministrator@20.96.41.90  "git clone https://github.com/gajalakshmi2901/docker-helloworld.git"'
+                     sh 'sshpass -p "Gajalakshmi@01" ssh -o "StrictHostKeyChecking=no" -p 50022 1CHAdministrator@20.96.41.90  "kubectl apply -f docker-helloworld/deployment.yaml"'
+                     sh 'sshpass -p "Gajalakshmi@01" ssh -o "StrictHostKeyChecking=no" -p 50022 1CHAdministrator@20.96.41.90 "kubectl expose deployment hello-world --name=hello-world-svc --type=NodePort --port=8080"'
                     
                 }
             }
         }
-         
+        stage('Port-Forward') {
+            steps {
+                script {
+                    try{
+
+                    sh 'sshpass -p "Gajalakshmi@01" ssh -o "StrictHostKeyChecking=no" -p 50022 1CHAdministrator@20.96.41.90 "sudo kubectl port-forward --address 0.0.0.0 service/hello-world-svc 8080:8080 > /dev/null 2>&1 &"'
+                    }
+                    catch(Exception e){
+                        echo 'Success'
+                    }
+                }
+            }
+        }
     }
 }
