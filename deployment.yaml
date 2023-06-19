@@ -16,4 +16,4 @@ spec:
         - name: hello-world
           image: image1:latest
           ports:
-            - containerPort: 8080
+            - containerPort: 8888
