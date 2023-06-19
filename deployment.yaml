@@ -17,3 +17,5 @@ spec:
           image: projecte.azurecr.io/image1
           ports:
             - containerPort: 8080
+           imagePullSecrets:
+           - name: acr-secret
