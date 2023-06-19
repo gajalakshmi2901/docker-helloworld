@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: hello-world
-          image: projecte.azurecr.io/image1:latest
+          image: projecte.azurecr.io/image1
           ports:
             - containerPort: 8080
