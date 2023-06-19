@@ -31,7 +31,7 @@ pipeline {
              stage('Deploying pod and exposing on container') {
              steps {
                   script {
-                     sh 'sshpass -p "Gajalakshmi@01" ssh -o "StrictHostKeyChecking=no" -p 50022 1CHAdministrator@20.96.41.90  "sudo kubectl apply -f gajalakshmi-tf/deployment.yaml"'
+                     sh 'sshpass -p "Gajalakshmi@01" ssh -o "StrictHostKeyChecking=no" -p 50022 1CHAdministrator@20.96.41.90  "kubectl apply -f gajalakshmi-tf/deployment.yaml"'
                      sh 'sshpass -p "Gajalakshmi@01" ssh -o "StrictHostKeyChecking=no" -p 50022 1CHAdministrator@20.96.41.90 "sudo kubectl expose deployment hello-world --name=hello-world-svc --type=NodePort --port=8888"'
                     
                 }
