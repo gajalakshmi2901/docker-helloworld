@@ -20,19 +20,18 @@ pipeline {
                     }
                 }
             }
-            stage('Pulling and Running Image') {
+            stage('Pulling Image from ACR') {
                 steps{
                     script{
                         sh 'sshpass -p "Gajalakshmi@01" ssh -o "StrictHostKeyChecking=no" -p 50022 1CHAdministrator@20.96.41.90 "sudo docker login projecte.azurecr.io -u projecte -p o0cledTfrzC8ChAaJCGF5l0fsvmRWQCGQ4Yrhve97G+ACRCLXnSS"'
                         sh 'sshpass -p "Gajalakshmi@01" ssh -o "StrictHostKeyChecking=no" -p 50022 1CHAdministrator@20.96.41.90 "sudo docker pull projecte.azurecr.io/image1"'
-                        sh 'sshpass -p "Gajalakshmi@01" ssh -o "StrictHostKeyChecking=no" -p 50022 1CHAdministrator@20.96.41.90 "sudo docker run -d -p 8888:80 projecte.azurecr.io/image1"'
                     }
                 }
         }
              stage('Deploying pod and exposing on container') {
              steps {
                   script {
-                     sh 'sshpass -p "Gajalakshmi@01" ssh -o "StrictHostKeyChecking=no" -p 50022 1CHAdministrator@20.96.41.90  "sudo kubectl apply -f deployment.yaml"'
+                     sh 'sshpass -p "Gajalakshmi@01" ssh -o "StrictHostKeyChecking=no" -p 50022 1CHAdministrator@20.96.41.90  "sudo kubectl apply -f gajalakshmi-tf/deployment.yaml"'
                      sh 'sshpass -p "Gajalakshmi@01" ssh -o "StrictHostKeyChecking=no" -p 50022 1CHAdministrator@20.96.41.90 "sudo kubectl expose deployment hello-world --name=hello-world-svc --type=NodePort --port=8888"'
                     
                 }
