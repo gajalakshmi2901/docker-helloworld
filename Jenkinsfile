@@ -37,7 +37,6 @@ pipeline {
                     sh "sshpass -p '${params.VM_PASSWORD}' ssh -o 'StrictHostKeyChecking=no' -p 50022 ${params.VM_USERNAME}@${params.VM_IP} 'sudo docker login ${params.DOCKER_SERVER} -u ${params.REGISTRY_NAME} -p ${params.REGISTRY_PASSWORD}'"
                     sh "sshpass -p '${params.VM_PASSWORD}' ssh -o 'StrictHostKeyChecking=no' -p 50022 ${params.VM_USERNAME}@${params.VM_IP} 'sudo docker pull ${params.DOCKER_SERVER}/${params.IMAGE_NAME}:latest'"
                     sh "sshpass -p '${params.VM_PASSWORD}' ssh -o 'StrictHostKeyChecking=no' -p 50022 ${params.VM_USERNAME}@${params.VM_IP} 'git clone https://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@github.com/gajalakshmi2901/docker-helloworld.git'"
-                    sh "sshpass -p '${params.VM_PASSWORD}' ssh -o 'StrictHostKeyChecking=no' -p 50022 ${params.VM_USERNAME}@${params.VM_IP} 'kubectl delete service ${params.SERVICE_NAME} --ignore-not-found=true'"
                     sh "sshpass -p '${params.VM_PASSWORD}' ssh -o 'StrictHostKeyChecking=no' -p 50022 ${params.VM_USERNAME}@${params.VM_IP} 'kubectl apply -f docker-helloworld/${params.DEPLOYMENT_FILE}.yaml'"
                 }
             }
