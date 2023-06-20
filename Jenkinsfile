@@ -3,7 +3,7 @@ pipeline {
     parameters {
         string(name: "VM_USERNAME", defaultValue: "1CHAdministrator", description: "Enter the username for VM")
         string(name: "VM_PASSWORD", defaultValue: "Gajalakshmi@01", description: "Enter the password for Password")
-        string(name: "VM_IP", defaultValue: "20.96.41.90", description: "Enter the remote server IP address")
+        string(name: "VM_IP", defaultValue:"20.72.109.95", description: "Enter the remote server IP address")
         string(name: "DOCKER_SERVER", defaultValue: "projecte.azurecr.io", description: "Enter the server URL for ACR")
         string(name: "REGISTRY_NAME", defaultValue: "projecte", description: "Enter the registry username")
         string(name: "REGISTRY_PASSWORD", defaultValue: "o0cledTfrzC8ChAaJCGF5l0fsvmRWQCGQ4Yrhve97G+ACRCLXnSS", description: "Enter the registry password")
