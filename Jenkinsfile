@@ -1,59 +1,76 @@
 pipeline {
     agent any
-
+    parameters {
+        string(name: "VM_USERNAME", defaultValue: "1CHAdministrator", description: "Enter the username for VM")
+        string(name: "VM_PASSWORD", defaultValue: "Gajalakshmi@01", description: "Enter the password for Password")
+        string(name: "VM_IP", defaultValue: "20.96.41.90", description: "Enter the remote server IP address")
+        string(name: "DOCKER_SERVER", defaultValue: "projecte.azurecr.io", description: "Enter the server URL for ACR")
+        string(name: "REGISTRY_NAME", defaultValue: "projecte", description: "Enter the registry username")
+        string(name: "REGISTRY_PASSWORD", defaultValue: "o0cledTfrzC8ChAaJCGF5l0fsvmRWQCGQ4Yrhve97G+ACRCLXnSS", description: "Enter the registry password")
+        string(name: "REPO_CREDENTIALS", defaultValue: "Gajalakshmi-tf", description: "Enter the credential ID for Azure repo")
+        string(name: "IMAGE_NAME", defaultValue: "image1", description: "Enter the image name")
+        string(name: "REPO_TOKEN", defaultValue:"cgsfrgfd4gla2vrlhbqz4cnxaim5euyjyilmarc6xwsl3cydol7q", description: "personal access token for azure repo")
+        string(name: "DEPLOYMENT_FILE", defaultValue: "hello-world", description: "Deployment file name")
+        string(name: "SERVICE_NAME", defaultValue: "hello-world-svc", description: "Enter the service name")
+        }
+    
     stages {
         stage('Checkout') {
-            steps{
-                git credentialsId: 'Gajalakshmi-tf', url: 'https://dev.azure.com/gajalakshmi0905/Terraform%20module/_git/gajalakshmi-tf', branch: 'develop'
-                
+            steps {
+                git credentialsId: "${params.REPO_CREDENTIALS}", url: 'https://dev.azure.com/gajalakshmi0905/Terraform%20module/_git/gajalakshmi-tf', branch: 'develop'
             }
         }
         
         stage('Build and Push Docker Image') {
             steps {
                 script {
-                    
-                       sh 'docker build -t image1 .'
-                       sh 'docker login projecte.azurecr.io -u projecte -p o0cledTfrzC8ChAaJCGF5l0fsvmRWQCGQ4Yrhve97G+ACRCLXnSS'
-                       sh 'docker tag image1 projecte.azurecr.io/image1'
-                       sh 'docker push projecte.azurecr.io/image1'
-                    }
-                }
-            }
-
-            stage('Pulling Image from ACR') {
-                steps{
-                    script{
-                        sh 'sshpass -p "Gajalakshmi@01" ssh -o "StrictHostKeyChecking=no" -p 50022 1CHAdministrator@20.96.41.90 "sudo docker login projecte.azurecr.io -u projecte -p o0cledTfrzC8ChAaJCGF5l0fsvmRWQCGQ4Yrhve97G+ACRCLXnSS"'
-                        sh 'sshpass -p "Gajalakshmi@01" ssh -o "StrictHostKeyChecking=no" -p 50022 1CHAdministrator@20.96.41.90 "sudo docker pull projecte.azurecr.io/image1:latest"'
-
-                }
-        }
-             stage('Deploying pod and exposing on container') {
-             steps {
-                  script {
-                     sh 'sshpass -p "Gajalakshmi@01" ssh -o "StrictHostKeyChecking=no" -p 50022 1CHAdministrator@20.96.41.90  "sudo yum -y install git"'
-                     sh 'sshpass -p "Gajalakshmi@01" ssh -o "StrictHostKeyChecking=no" -p 50022 1CHAdministrator@20.96.41.90  "git clone https://github.com/gajalakshmi2901/docker-helloworld.git"'
-                     sh 'sshpass -p "Gajalakshmi@01" ssh -o "StrictHostKeyChecking=no" -p 50022 1CHAdministrator@20.96.41.90  "kubectl apply -f docker-helloworld/deployment.yaml"'
-                     sh 'sshpass -p "Gajalakshmi@01" ssh -o "StrictHostKeyChecking=no" -p 50022 1CHAdministrator@20.96.41.90 "kubectl expose deployment hello-world --name=hello-world-svc --type=NodePort --port=8080"'
-
-                    
+                    sh 'docker build -t ${params.IMAGE_NAME} .'
+                    sh "docker login ${params.DOCKER_SERVER} -u ${params.REGISTRY_NAME} -p ${params.REGISTRY_PASSWORD}"
+                    sh "docker tag ${params.IMAGE_NAME} ${params.DOCKER_SERVER}/${params.IMAGE_NAME}"
+                    sh "docker push ${params.DOCKER_SERVER}/${params.IMAGE_NAME}"
                 }
             }
         }
+        
+        stage('Pulling Image from ACR and deploying pod') {
+            steps {
+                script {
+                    sh "sshpass -p '${params.VM_PASSWORD}' ssh -o 'StrictHostKeyChecking=no' -p 50022 ${params.VM_USERNAME}@${params.VM_IP} 'sudo docker login ${params.DOCKER_SERVER} -u ${params.REGISTRY_NAME} -p ${params.REGISTRY_PASSWORD}'"
+                    sh "sshpass -p '${params.VM_PASSWORD}' ssh -o 'StrictHostKeyChecking=no' -p 50022 ${params.VM_USERNAME}@${params.VM_IP} 'sudo docker pull ${params.DOCKER_SERVER}/${params.IMAGE_NAME}:latest'"
+                    sh "sshpass -p '${params.VM_PASSWORD}' ssh -o 'StrictHostKeyChecking=no' -p 50022 ${params.VM_USERNAME}@${params.VM_IP} 'sudo yum -y install git'"
+                    sh "sshpass -p '${params.VM_PASSWORD}' ssh -o 'StrictHostKeyChecking=no' -p 50022 ${params.VM_USERNAME}@${params.VM_IP} 'rm -rf docker-helloworld && git clone "https://gajalakshmi0905:cgsfrgfd4gla2vrlhbqz4cnxaim5euyjyilmarc6xwsl3cydol7q@dev.azure.com/gajalakshmi0905/Terraform%20module/_git/gajalakshmi-tf"'"
+                    sh "sshpass -p '${params.VM_PASSWORD}' ssh -o 'StrictHostKeyChecking=no' -p 50022 ${params.VM_USERNAME}@${params.VM_IP} 'kubectl delete service hello-world-svc --ignore-not-found=true'"
+                    sh "sshpass -p '${params.VM_PASSWORD}' ssh -o 'StrictHostKeyChecking=no' -p 50022 ${params.VM_USERNAME}@${params.VM_IP} 'kubectl apply -f docker-helloworld/deployment.yaml'"
+
+                }
+            }
+        }
+        
+        stage("Delay Stage") {
+            steps {
+                echo "Performing some tasks before the exposing the container"
+                sleep time: 200, unit: 'SECONDS'
+                echo "Resuming pipeline"
+            }
+        }
+        stage('exposing on container') {
+            steps {
+                script {
+                    sh "sshpass -p '${params.VM_PASSWORD}' ssh -o 'StrictHostKeyChecking=no' -p 50022 ${params.VM_USERNAME}@${params.VM_IP} 'kubectl expose deployment hello-world --name=hello-world-svc --type=NodePort --port=8080'"
+                }
+            }
+        }
+        
         stage('Port-Forward') {
             steps {
                 script {
-                    try{
-
-                    sh 'sshpass -p "Gajalakshmi@01" ssh -o "StrictHostKeyChecking=no" -p 50022 1CHAdministrator@20.96.41.90 "sudo kubectl port-forward --address 0.0.0.0 service/hello-world-svc 8080:8080 > /dev/null 2>&1 &"'
-                    }
-                    catch(Exception e){
+                    try {
+                        sh "sshpass -p '${params.VM_PASSWORD}' ssh -o 'StrictHostKeyChecking=no' -p 50022 ${params.VM_USERNAME}@${params.VM_IP} 'sudo kubectl port-forward --address 0.0.0.0 service/hello-world-svc 8080:8080 > /dev/null 2>&1 &'"
+                    } catch(Exception e) {
                         echo 'Success'
                     }
                 }
             }
         }
     }
-}
 }
